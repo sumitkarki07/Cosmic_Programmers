@@ -3,23 +3,579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Alert System</title>
+    <title>Weather Alert System - Real-time Weather Monitoring</title>
+    <meta name="description" content="Get real-time weather data and extreme weather alerts for any location worldwide">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="css/styles.css" rel="stylesheet">
     <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-3xl font-bold mb-4">Weather Alert System</h1>
-    <div class="bg-white p-6 rounded shadow-md w-80">
-        <form id="weather-form">
-            <input type="text" id="address" placeholder="Enter address" class="border p-2 mb-4 w-full" required>
-            <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">Check Weather</button>
-        </form>
-        <div id="weather-display" class="mt-4"></div>
-        <div id="alert-display" class="mt-2 text-red-600"></div>
-        <!-- Add a map container -->
-        <div id="map" style="height: 250px; margin-top: 16px; border-radius: 8px;"></div>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
+    
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-cloud-sun-rain text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Weather Alert System</h1>
+                        <p class="text-sm text-blue-100">Real-time Weather Monitoring & Alerts</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#about" class="hover:text-blue-200 transition">About</a>
+                    <a href="#features" class="hover:text-blue-200 transition">Features</a>
+                    <a href="#contact" class="hover:text-blue-200 transition">Contact</a>
+                </nav>
+                <button id="mobile-menu-btn" class="md:hidden">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden bg-blue-600 text-white md:hidden">
+        <div class="container mx-auto px-4 py-3 space-y-2">
+            <a href="#about" class="block hover:bg-blue-700 px-3 py-2 rounded">About</a>
+            <a href="#features" class="block hover:bg-blue-700 px-3 py-2 rounded">Features</a>
+            <a href="#contact" class="block hover:bg-blue-700 px-3 py-2 rounded">Contact</a>
+        </div>
     </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        
+        <!-- Hero Section -->
+        <div class="text-center mb-8">
+            <h2 class="text-4xl font-bold text-gray-800 mb-3">Plan Your Perfect Outdoor Event</h2>
+            <p class="text-gray-600 max-w-3xl mx-auto">Use historical NASA weather data to determine the likelihood of extreme weather conditions for your vacation, hike, fishing trip, or any outdoor activity. Get probability insights based on years of data!</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="max-w-4xl mx-auto mb-6">
+            <div class="flex gap-2 bg-white rounded-lg shadow-md p-2">
+                <button id="tab-current" class="flex-1 py-3 px-4 rounded-md bg-blue-600 text-white font-semibold transition">
+                    <i class="fas fa-cloud-sun"></i> Current Weather
+                </button>
+                <button id="tab-planning" class="flex-1 py-3 px-4 rounded-md bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
+                    <i class="fas fa-calendar-check"></i> Event Planning
+                </button>
+                <button id="tab-forecast" class="flex-1 py-3 px-4 rounded-md bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
+                    <i class="fas fa-calendar-week"></i> 7-Day Forecast
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Location Buttons -->
+        <div class="mb-6 text-center">
+            <p class="text-sm text-gray-600 mb-3">Quick Search:</p>
+            <div class="flex flex-wrap justify-center gap-2">
+                <button class="quick-location bg-white hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm shadow-md transition" data-location="Kathmandu, Nepal">
+                    <i class="fas fa-map-marker-alt"></i> Kathmandu
+                </button>
+                <button class="quick-location bg-white hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm shadow-md transition" data-location="New York, USA">
+                    <i class="fas fa-map-marker-alt"></i> New York
+                </button>
+                <button class="quick-location bg-white hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm shadow-md transition" data-location="London, UK">
+                    <i class="fas fa-map-marker-alt"></i> London
+                </button>
+                <button class="quick-location bg-white hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm shadow-md transition" data-location="Tokyo, Japan">
+                    <i class="fas fa-map-marker-alt"></i> Tokyo
+                </button>
+                <button id="use-my-location" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm shadow-md transition">
+                    <i class="fas fa-location-arrow"></i> Use My Location
+                </button>
+            </div>
+        </div>
+
+        <!-- Event Planning Section (NEW) -->
+        <div id="planning-section" class="max-w-4xl mx-auto hidden">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                
+                <!-- Planning Form -->
+                <div class="bg-gradient-to-r from-green-500 to-teal-600 p-6">
+                    <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-hiking"></i>
+                        Plan Your Outdoor Activity
+                    </h3>
+                    <form id="planning-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Location Input -->
+                            <div>
+                                <label class="text-white text-sm font-semibold mb-2 block">
+                                    <i class="fas fa-map-marker-alt"></i> Location
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="planning-address" 
+                                    placeholder="Enter city or location..." 
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-transparent focus:border-white focus:outline-none text-gray-700"
+                                    required
+                                >
+                            </div>
+                            
+                            <!-- Date Input -->
+                            <div>
+                                <label class="text-white text-sm font-semibold mb-2 block">
+                                    <i class="fas fa-calendar"></i> Event Date
+                                </label>
+                                <input 
+                                    type="date" 
+                                    id="planning-date" 
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-transparent focus:border-white focus:outline-none text-gray-700"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Activity Type Selection -->
+                        <div>
+                            <label class="text-white text-sm font-semibold mb-2 block">
+                                <i class="fas fa-running"></i> Activity Type (Optional)
+                            </label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                <button type="button" class="activity-btn bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm transition" data-activity="vacation">
+                                    🏖️ Vacation
+                                </button>
+                                <button type="button" class="activity-btn bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm transition" data-activity="hiking">
+                                    🥾 Hiking
+                                </button>
+                                <button type="button" class="activity-btn bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm transition" data-activity="fishing">
+                                    🎣 Fishing
+                                </button>
+                                <button type="button" class="activity-btn bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm transition" data-activity="camping">
+                                    🏕️ Camping
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Historical Years -->
+                        <div>
+                            <label class="text-white text-sm font-semibold mb-2 block">
+                                <i class="fas fa-calendar-days"></i> Forecast Analysis Range: <span id="years-display">7</span> days
+                            </label>
+                            <input 
+                                type="range" 
+                                id="planning-years" 
+                                min="3" 
+                                max="30" 
+                                value="7" 
+                                class="w-full"
+                            >
+                            <p class="text-white/80 text-xs mt-1">
+                                Analyzes forecast data for multiple days around your target date (max 30 days ahead)
+                            </p>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="w-full bg-white text-green-600 px-6 py-4 rounded-lg font-bold hover:bg-green-50 transition shadow-md flex items-center justify-center gap-2 text-lg"
+                        >
+                            <i class="fas fa-chart-line"></i>
+                            Analyze Weather Probability
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Planning Results -->
+                <div id="planning-results" class="hidden p-6">
+                    <!-- Location and Date Info -->
+                    <div class="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-xl mb-6">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-800" id="planning-location-name"></h4>
+                                <p class="text-sm text-gray-600" id="planning-date-display"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-bold" id="planning-days-away"></span> days away
+                                </p>
+                                <p class="text-xs text-gray-500">Analyzing <span id="planning-years-analyzed" class="font-bold"></span> days of forecast</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Probability Dashboard -->
+                    <div id="probability-dashboard" class="space-y-6">
+                        <!-- Temperature Probability -->
+                        <div class="bg-white border-2 border-gray-200 rounded-xl p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <i class="fas fa-temperature-high text-3xl text-red-500"></i>
+                                <div>
+                                    <h5 class="font-bold text-lg text-gray-800">Temperature Forecast</h5>
+                                    <p class="text-sm text-gray-600">Predicted temperature patterns for your event</p>
+                                </div>
+                            </div>
+                            <div id="temp-probability" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Wind Probability -->
+                        <div class="bg-white border-2 border-gray-200 rounded-xl p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <i class="fas fa-wind text-3xl text-blue-500"></i>
+                                <div>
+                                    <h5 class="font-bold text-lg text-gray-800">Wind Forecast</h5>
+                                    <p class="text-sm text-gray-600">Predicted wind speed patterns</p>
+                                </div>
+                            </div>
+                            <div id="wind-probability" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Rainfall Probability -->
+                        <div class="bg-white border-2 border-gray-200 rounded-xl p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <i class="fas fa-cloud-rain text-3xl text-indigo-500"></i>
+                                <div>
+                                    <h5 class="font-bold text-lg text-gray-800">Rainfall Forecast</h5>
+                                    <p class="text-sm text-gray-600">Predicted precipitation patterns</p>
+                                </div>
+                            </div>
+                            <div id="rain-probability" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Overall Recommendation -->
+                        <div id="overall-recommendation" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl p-6">
+                            <h5 class="font-bold text-xl mb-3 flex items-center gap-2">
+                                <i class="fas fa-thumbs-up"></i>
+                                Event Suitability
+                            </h5>
+                            <p id="recommendation-text" class="text-lg"></p>
+                        </div>
+
+                        <!-- Download Options -->
+                        <div class="flex gap-3">
+                            <button id="download-csv" class="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2">
+                                <i class="fas fa-download"></i> Download CSV
+                            </button>
+                            <button id="download-json" class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                                <i class="fas fa-file-code"></i> Download JSON
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Planning Loading -->
+                    <div id="planning-loading" class="hidden text-center py-12">
+                        <i class="fas fa-spinner fa-spin text-5xl text-green-600 mb-4"></i>
+                        <p class="text-gray-600 text-lg">Analyzing forecast data for your event...</p>
+                        <p class="text-gray-500 text-sm mt-2">Fetching up to 30 days of weather predictions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Weather Card -->
+        <div id="current-weather-section" class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                
+                <!-- Search Section -->
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+                    <form id="weather-form" class="flex gap-3">
+                        <div class="flex-grow relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                id="address" 
+                                placeholder="Enter city, address, or location..." 
+                                class="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-transparent focus:border-white focus:outline-none text-gray-700"
+                                required
+                            >
+                        </div>
+                        <button 
+                            type="submit" 
+                            class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition shadow-md flex items-center gap-2"
+                        >
+                            <i class="fas fa-cloud-sun"></i>
+                            <span class="hidden sm:inline">Check Weather</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div id="loading" class="hidden p-6 text-center">
+                    <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-3"></i>
+                    <p class="text-gray-600">Fetching weather data...</p>
+                </div>
+
+                <!-- Weather Results -->
+                <div id="weather-results" class="hidden">
+                    
+                    <!-- Location Info with Unit Toggle -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800" id="location-name">Location</h3>
+                                <p class="text-sm text-gray-600" id="location-coords"></p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <!-- Unit Conversion Toggle -->
+                                <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm">
+                                    <span class="text-xs text-gray-600">Units:</span>
+                                    <button id="unit-toggle" class="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition text-sm font-semibold">
+                                        <i class="fas fa-exchange-alt"></i>
+                                        <span id="unit-label">Metric</span>
+                                    </button>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600" id="last-updated">Last updated</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weather Data Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-6">
+                        <!-- Temperature -->
+                        <div class="bg-gradient-to-br from-orange-50 to-red-50 p-4 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-temperature-high text-3xl text-red-500"></i>
+                                <div>
+                                    <p class="text-sm text-gray-600">Temperature</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="temp-value">--</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wind Speed -->
+                        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-wind text-3xl text-blue-500"></i>
+                                <div>
+                                    <p class="text-sm text-gray-600">Wind Speed</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="wind-value">--</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rainfall -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-cloud-rain text-3xl text-indigo-500"></i>
+                                <div>
+                                    <p class="text-sm text-gray-600">Rainfall</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="rain-value">--</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alert Display -->
+                    <div id="alert-display" class="px-6 pb-4"></div>
+
+                    <!-- Future Predictions Section -->
+                    <div id="predictions-section" class="px-6 pb-4 hidden">
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <i class="fas fa-crystal-ball text-3xl text-purple-600"></i>
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-800">Weather Predictions & Alerts</h4>
+                                    <p class="text-sm text-gray-600">Upcoming weather risks in the next 24-48 hours</p>
+                                </div>
+                            </div>
+                            <div id="predictions-content" class="space-y-3"></div>
+                            
+                            <!-- Notification Permission -->
+                            <div id="notification-prompt" class="mt-4 p-3 bg-white rounded-lg border border-purple-200">
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-bell text-purple-600"></i>
+                                        <p class="text-sm text-gray-700">Enable notifications for weather alerts</p>
+                                    </div>
+                                    <button id="enable-notifications" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition">
+                                        <i class="fas fa-bell-on"></i> Enable
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7-Day Forecast Section -->
+                    <div id="forecast-section" class="px-6 pb-4 hidden">
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-calendar-week text-3xl text-blue-600"></i>
+                                    <div>
+                                        <h4 class="font-bold text-lg text-gray-800">7-Day Weather Forecast</h4>
+                                        <p class="text-sm text-gray-600">Extended forecast and risk assessment</p>
+                                    </div>
+                                </div>
+                                <div id="forecast-loading" class="hidden">
+                                    <i class="fas fa-spinner fa-spin text-blue-600"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Daily Forecast Cards -->
+                            <div id="forecast-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+                            
+                            <!-- Forecast Alerts Summary -->
+                            <div id="forecast-alerts" class="mt-4 hidden">
+                                <div class="bg-white rounded-lg border-2 border-orange-200 p-4">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <i class="fas fa-exclamation-triangle text-orange-600 text-xl"></i>
+                                        <h5 class="font-bold text-gray-800">Extreme Weather Alerts</h5>
+                                    </div>
+                                    <div id="forecast-alerts-content" class="space-y-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map Container -->
+                    <div class="px-6 pb-6">
+                        <div class="rounded-xl overflow-hidden shadow-md border-2 border-gray-200">
+                            <div id="map" style="height: 350px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Weather Tips -->
+                    <div id="weather-tips" class="bg-blue-50 border-t border-blue-100 p-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-lightbulb text-yellow-500 text-xl mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-gray-800 mb-1">Weather Tip:</p>
+                                <p class="text-sm text-gray-700" id="tip-text">Stay safe and check weather conditions regularly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden p-6">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-circle text-red-500 text-2xl"></i>
+                            <div>
+                                <p class="font-semibold text-red-800">Error</p>
+                                <p class="text-red-700 text-sm" id="error-message"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div id="features" class="mt-12 max-w-6xl mx-auto">
+            <h3 class="text-3xl font-bold text-center text-gray-800 mb-8">Key Features</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <i class="fas fa-chart-line text-4xl text-green-500 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Probability Analysis</h4>
+                    <p class="text-gray-600 text-sm">Historical data analysis for event planning</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <i class="fas fa-bolt text-4xl text-yellow-500 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Real-time Data</h4>
+                    <p class="text-gray-600 text-sm">Live weather updates from NASA data</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <i class="fas fa-calendar-alt text-4xl text-blue-500 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">7-Day Forecast</h4>
+                    <p class="text-gray-600 text-sm">Extended weather predictions</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <i class="fas fa-download text-4xl text-purple-500 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Export Data</h4>
+                    <p class="text-gray-600 text-sm">Download in CSV or JSON format</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div id="about" class="mt-12 max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">About Weather Probability Analysis</h3>
+            <div class="space-y-4 text-gray-700">
+                <p>This tool uses historical NASA Earth observation data to help you plan outdoor activities with confidence. Unlike traditional weather forecasts, our probability analysis shows you the likelihood of specific weather conditions based on years of historical data for your exact date and location.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div class="border-l-4 border-red-500 pl-4">
+                        <p class="font-semibold text-red-700"><i class="fas fa-temperature-high"></i> Very Hot</p>
+                        <p class="text-sm text-gray-600">Temperature > 35°C (95°F)</p>
+                    </div>
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <p class="font-semibold text-blue-700"><i class="fas fa-snowflake"></i> Very Cold</p>
+                        <p class="text-sm text-gray-600">Temperature ≤ 0°C (32°F)</p>
+                    </div>
+                    <div class="border-l-4 border-cyan-500 pl-4">
+                        <p class="font-semibold text-cyan-700"><i class="fas fa-wind"></i> Very Windy</p>
+                        <p class="text-sm text-gray-600">Wind speed > 15 m/s (34 mph)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="border-l-4 border-indigo-500 pl-4">
+                        <p class="font-semibold text-indigo-700"><i class="fas fa-cloud-rain"></i> Very Wet</p>
+                        <p class="text-sm text-gray-600">Rainfall > 10 mm/day</p>
+                    </div>
+                    <div class="border-l-4 border-orange-500 pl-4">
+                        <p class="font-semibold text-orange-700"><i class="fas fa-thermometer-half"></i> Comfortable</p>
+                        <p class="text-sm text-gray-600">Moderate conditions for outdoor activities</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- About -->
+                <div>
+                    <h4 class="font-bold text-lg mb-3 flex items-center gap-2">
+                        <i class="fas fa-cloud-sun-rain"></i>
+                        Weather Alert System
+                    </h4>
+                    <p class="text-gray-400 text-sm">
+                        Providing real-time weather data and alerts to keep you safe and informed about extreme weather conditions worldwide.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-bold text-lg mb-3">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#about" class="hover:text-white transition"><i class="fas fa-info-circle"></i> About</a></li>
+                        <li><a href="#features" class="hover:text-white transition"><i class="fas fa-star"></i> Features</a></li>
+                        <li><a href="https://www.meteomatics.com/" target="_blank" class="hover:text-white transition"><i class="fas fa-external-link-alt"></i> API Provider</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div id="contact">
+                    <h4 class="font-bold text-lg mb-3">Contact & Info</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><i class="fas fa-envelope"></i> support@weatheralert.com</li>
+                        <li><i class="fas fa-globe"></i> Global Coverage</li>
+                        <li><i class="fas fa-shield-alt"></i> Secure & Private</li>
+                        <li class="flex gap-3 mt-3">
+                            <a href="#" class="hover:text-white transition"><i class="fab fa-twitter text-xl"></i></a>
+                            <a href="#" class="hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
+                            <a href="#" class="hover:text-white transition"><i class="fab fa-github text-xl"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-400">
+                <p>&copy; 2025 Weather Event Planner. NASA Space Apps Challenge 2025. All rights reserved.</p>
+                <p class="mt-2">Powered by <a href="https://www.meteomatics.com/" target="_blank" class="text-blue-400 hover:text-blue-300">Meteomatics API</a> &amp; NASA Earth Observation Data</p>
+                <p class="mt-2">Made with <i class="fas fa-heart text-red-500"></i> by Cosmic Programmers</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top" class="hidden fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition z-50">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <!-- Add Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="js/app.js"></script>

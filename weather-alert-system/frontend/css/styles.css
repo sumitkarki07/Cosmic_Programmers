@@ -1,107 +1,298 @@
+/* Custom Styles for Weather Alert System */
+
+* {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Segoe UI', 'Inter', 'system-ui', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: #f3f4f6;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
 }
 
-.container {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
-h1 {
-    text-align: center;
-    color: #333;
+/* Header Animations */
+header {
+    animation: slideDown 0.5s ease-out;
 }
 
-.input-group {
-    margin-bottom: 15px;
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
+/* Loading Spinner Animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.fa-spinner {
+    animation: spin 1s linear infinite;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-.alert {
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 4px;
-}
-
-.alert.success {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.alert.error {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
+/* Card Hover Effects */
 .bg-white {
-    width: 100vw;
-    max-width: 400px;
-    box-sizing: border-box;
-    padding: 2rem;
-    margin: 0 auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.bg-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Button Animations */
+button, .quick-location {
+    transition: all 0.3s ease;
+}
+
+button:hover, .quick-location:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active, .quick-location:active {
+    transform: translateY(0);
+}
+
+/* Input Focus Effect */
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Map Container */
 #map {
     width: 100%;
-    height: 250px;
-    border-radius: 8px;
-    margin-top: 16px;
+    height: 350px;
+    border-radius: 12px;
+    z-index: 1;
 }
 
-@media (max-width: 600px) {
+.leaflet-container {
+    font-family: inherit;
+}
+
+/* Alert Animations */
+#alert-display > div {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Weather Cards Animation */
+.grid > div {
+    animation: scaleIn 0.4s ease-out backwards;
+}
+
+.grid > div:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.grid > div:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.grid > div:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Scroll to Top Button */
+#scroll-top {
+    transition: all 0.3s ease;
+}
+
+#scroll-top:hover {
+    transform: translateY(-4px);
+}
+
+/* Mobile Menu Animation */
+#mobile-menu {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Footer Links */
+footer a {
+    transition: color 0.2s ease;
+}
+
+/* Loading Pulse Effect */
+#loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Feature Cards Hover */
+#features .bg-white {
+    transition: all 0.3s ease;
+}
+
+#features .bg-white:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+#features .bg-white:hover i {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+/* Gradient Text Effect */
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
     h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
+        font-size: 1.5rem;
     }
-    .bg-white {
-        padding: 1rem;
-        width: 100vw;
-        max-width: 100vw;
-        border-radius: 0;
-        box-shadow: none;
+    
+    h2 {
+        font-size: 1.75rem;
     }
+    
     #map {
-        height: 150px;
+        height: 250px;
     }
-    input, button {
-        font-size: 1rem;
+    
+    .grid {
+        gap: 0.75rem;
+    }
+    
+    footer .grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    #weather-results .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Print Styles */
+@media print {
+    header, footer, button, #scroll-top {
+        display: none;
+    }
+    
+    body {
+        background: white;
+    }
+    
+    #map {
+        display: none;
+    }
+}
+
+/* Accessibility Improvements */
+button:focus, a:focus, input:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Reduced Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    /* You can add dark mode styles here if needed */
+}
+
+/* Loading State Shimmer Effect */
+.shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
     }
 }
