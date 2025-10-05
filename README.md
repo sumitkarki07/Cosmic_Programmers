@@ -32,7 +32,7 @@ A real-time weather monitoring and event planning system that uses NASA Earth ob
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/Cosmic_Programmers.git
+   git clone https://github.com/sumitkarki07/weather-alert-system.git
    cd weather-alert-system
    ```
 
@@ -78,12 +78,14 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 🎯 NASA Space Apps Challenge 2025
 
-This project was developed for the NASA Space Apps Challenge 2025 under the "Tell Us a Climate Story!" challenge category.
+This project was developed for the NASA Space Apps Challenge 2025 under the "Will It Rain on My Parade?" challenge category.
 
 ## 👥 Team Cosmic Programmers
 
 - [Sachin Shrestha](https://github.com/shrestha-sachin)
 - [Sumit Karki](https://github.com/sumitkarki07)
+- [Grishma Basnet](https://github.com/Grishmbasnet515)
+
 
 
 ## 📞 Contact
