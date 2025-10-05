@@ -1,8 +1,8 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from config import Config
-from services.weather_service import WeatherService
-from utils.alert_checker import check_alert_conditions
+from services.weather_service import WeatherService, get_weather_data
+from utils.alert_checker import check_alert_conditions, check_extreme_weather
 
 app = Flask(__name__)
 CORS(app)
@@ -52,13 +52,15 @@ def get_weather():
     # Fetch weather data
     try:
         weather_data = weather_service.fetch_weather_data(lat, lon)
-        alerts = check_alert_conditions(weather_data)
+        
+        # Check for extreme weather alerts
+        alert = check_extreme_weather(weather_data)
         
         return jsonify({
             'success': True,
             'weather': weather_data,
-            'alerts': alerts,
-            'alert_count': len([a for a in alerts if a['severity'] in ['high', 'moderate']])
+            'alert': alert,
+            'alert_count': len([a for a in alert if a['severity'] in ['high', 'moderate']])
         }), 200
         
     except ValueError as e:
