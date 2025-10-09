@@ -84,7 +84,7 @@ This project was developed for the NASA Space Apps Challenge 2025 under the "Wil
 
 - [Sachin Shrestha](https://github.com/shrestha-sachin)
 - [Sumit Karki](https://github.com/sumitkarki07)
-- [Grishma Basnet](https://github.com/Grishmbasnet515)
+
 
 
 
